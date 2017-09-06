@@ -4,14 +4,27 @@
   "description": "",
   "main": "googleapitest.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-pre-gyp install --fallback-to-build"
   },
   "author": "kimilsik",
   "license": "ISC",
   "dependencies": {
+    "opencv": "git+https://github.com/peterbraden/node-opencv.git",
     "@google-cloud/vision": "^0.12.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
+    "node-kmeans": "^1.1.0",
+    "node-pre-gyp": "^0.6.36",
     "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "2.x"
+  },
+  "bundledDependencies":["node-pre-gyp"],
+  "binary": {
+    "module_name": "node-opencv",
+    "module_path": "./lib/binding/",
+    "host": "https://node-opencv.s3-us-west-1.amazonaws.com"
   }
 }

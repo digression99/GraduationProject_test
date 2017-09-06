@@ -24,26 +24,53 @@ let testImageUrl = path.join(__dirname, '/public/IMG_2448.jpg');
 
 app.get('/', (req, res) => {
     console.log("I'm in get req.");
-    // 이게 source가 아니라 content면 데이터는 buffer가 되어야 한다.
-    vision.faceDetection({ source: { filename: testImageUrl } })
-        .then((results) => {
-            console.log("I got the results!");
-            const faces = results[0].faceAnnotations;
 
-            console.log('Faces:');
-            faces.forEach((face, i) => {
-                console.log(`  Face #${i + 1}:`);
-                console.log(`    Joy: ${face.joyLikelihood}`);
-                console.log(`    Anger: ${face.angerLikelihood}`);
-                console.log(`    Sorrow: ${face.sorrowLikelihood}`);
-                console.log(`    Surprise: ${face.surpriseLikelihood}`);
+    fs.readFile(testImageUrl, (err, imgFile) => {
+        if (err) console.error(err);
+        else {
+            let imgBase64 = new Buffer(imgFile).toString('base64');
+
+            vision.faceDetection({content : imgBase64}).then((results) => {
+                console.log("I got the results with base 64 img! !!!!!!");
+                const faces = results[0].faceAnnotations;
+
+                console.log('Faces:');
+                faces.forEach((face, i) => {
+                    console.log(`  Face #${i + 1}:`);
+                    console.log(`    Joy: ${face.joyLikelihood}`);
+                    console.log(`    Anger: ${face.angerLikelihood}`);
+                    console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+                    console.log(`    Surprise: ${face.surpriseLikelihood}`);
+                });
+
+                res.json({success : true, images : faces});
+
+            }).catch((err) => {
+                console.error("ERROR : ", err);
             });
+        }
+    });
 
-            res.json({success : true, images : faces});
-        })
-        .catch((err) => {
-            console.error('ERROR:', err);
-        });
+    // // 이게 source가 아니라 content면 데이터는 buffer가 되어야 한다.
+    // vision.faceDetection({ source: { filename: testImageUrl } })
+    //     .then((results) => {
+    //         console.log("I got the results!");
+    //         const faces = results[0].faceAnnotations;
+    //
+    //         console.log('Faces:');
+    //         faces.forEach((face, i) => {
+    //             console.log(`  Face #${i + 1}:`);
+    //             console.log(`    Joy: ${face.joyLikelihood}`);
+    //             console.log(`    Anger: ${face.angerLikelihood}`);
+    //             console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+    //             console.log(`    Surprise: ${face.surpriseLikelihood}`);
+    //         });
+    //
+    //         res.json({success : true, images : faces});
+    //     })
+    //     .catch((err) => {
+    //         console.error('ERROR:', err);
+    //     });
 
     // fs.readFile(testImageUrl, (err, imgFile) => {
     //     if (err) console.error(err);
@@ -74,8 +101,6 @@ app.get('/', (req, res) => {
     //     }
     // })
 });
-
-
 
 app.listen(3000, () => {
     console.log('graduation project test is listening on port ... 3000');
